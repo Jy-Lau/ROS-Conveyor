@@ -7,7 +7,7 @@
       <arg name="headless" value="false"/>
       <arg name="debug" value="false"/>
     </include>
-    <node name="rviz" pkg="rviz" type="rviz"/>
+    <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true"/> -->
 
     <group ns="multi_conveyor">
         <arg name="x_initial" default="1.0" />

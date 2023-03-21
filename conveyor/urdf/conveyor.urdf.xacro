@@ -52,7 +52,7 @@
 		<parent link="belt_visual"/>
 		<child link="belt$(arg system)_moving"/>
 		<axis xyz="0 1 0"/>
-		<limit lower="0.0" upper="1" effort="1000" velocity="1000"/>
+		<limit lower="0.0" upper="0.1" effort="1000" velocity="1000"/>
 	</joint>
 
 	<link name="belt$(arg system)_moving">
@@ -64,7 +64,7 @@
 		<visual>
 			<origin xyz="0.0 0.0 0.0005" rpy="0.0 0.0 0.0"/>
 			<geometry>
-				<box size="0.3 1.2 0.001"/>
+				<box size="0.3 1.25 0.001"/>
 			</geometry>
 			<material name="black">
 			</material>
@@ -72,7 +72,7 @@
 		<collision>
 			<origin xyz="0.0 0.0 0.0005" rpy="0.0 0.0 0.0"/>
 			<geometry>
-				<box size="0.3 1.2 0.001"/>
+				<box size="0.3 1.17 0.001"/>
 			</geometry>
 		</collision>
 	</link>
@@ -88,8 +88,8 @@
 	<gazebo>
 		<plugin name="conveyor_belt_plugin" filename="libROSConveyorBeltPlugin.so">
 			<robot_namespace>/</robot_namespace>
-			<link>belt_moving</link>
-			<power>40</power>
+			<link>belt$(arg system)_moving</link>
+			<power>30</power>
 			<control_topic>conveyor/control$(arg system)</control_topic>
 			<state_topic>conveyor/state$(arg system)</state_topic>
 			<max_velocity>1.0</max_velocity>

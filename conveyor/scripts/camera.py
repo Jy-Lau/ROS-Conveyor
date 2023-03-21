@@ -1,28 +1,31 @@
 #!/usr/bin/env python3
 
 import rospy
-from geometry_msgs.msg import Twist
-from sensor_msgs.msg import LaserScan, Image
-from nav_msgs.msg import Odometry
-import time
-from math import pi
-from tf.transformations import euler_from_quaternion
+from sensor_msgs.msg import Image
 from std_msgs.msg import String
 import cv2
 from cv_bridge import CvBridge, CvBridgeError
+import numpy as np
 
 class Camera():
 
     def __init__(self):
         rospy.init_node('camera_node', anonymous=True)
-        self.rate = rospy.Rate(0.1)
+        self.rate = rospy.Rate(10)
         rospy.loginfo("Camera...")
         self._check_camera_ready()
         self.bridge = CvBridge()
-        self.obstacle_publisher = rospy.Publisher('/obstacle1', String, queue_size=10)
-        # Subscribe to scan
+        self.take_pic = False
+        self.hsv_threshold = {}
+        self.hsv_threshold['red'] = np.array([[0, 110, 80], [0, 255, 130]])
+        self.hsv_threshold['green'] = np.array([[55, 111, 83], [94, 255, 116]])
+        self.hsv_threshold['blue'] = np.array([[71, 110, 81], [121, 255, 117]])
+        self.map_color={}
+        self.map_color[0] = 'Red'
+        self.map_color[1] = 'Green'
+        self.map_color[2] = 'Blue'
+        self.obstacle_subscriber = rospy.Subscriber('/obstacle', String, self.obstacle_callback)
         self.laser_subscriber = rospy.Subscriber('/camera/camera_left/image_raw', Image, self.camera_callback)
-
 
     def _check_camera_ready(self):
         camera_msg = None
@@ -37,23 +40,34 @@ class Camera():
         rospy.loginfo("Checking Camera...DONE")
 
     def camera_callback(self, msg):
-        try:
-            cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-        except CvBridgeError as e:
-            rospy.logerr(e)
-            return
-        
-        cv2.imshow("Image window", cv_image)
-        cv2.waitKey(1)
+        if self.take_pic == True:
+            try:
+                cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+                color = self._find_color(cv_image)
+                rospy.loginfo(f"{self.map_color[color]} cube detected!")
+            except CvBridgeError as e:
+                rospy.logerr(e)
+                return
+            self.take_pic = False
+            
+            
+    def obstacle_callback(self, msg):
+        if msg.data == "In":
+            self.take_pic = True
 
-        # Uncomment the following line to save the image as a PNG file
-        # cv2.imwrite("image.png", cv_image)
+    def _find_color(self, img):
+        kernel = np.ones((5, 5), np.float32)/25
+        blur = cv2.filter2D(img, -1, kernel)
+        hsv = cv2.cvtColor(blur, cv2.COLOR_BGR2HSV)
         
-        # self.obstacle_publisher.publish(obstacle)
-
+        mask_red = cv2.inRange(hsv, self.hsv_threshold['red'][0], self.hsv_threshold['red'][1])
+        mask_green = cv2.inRange(hsv, self.hsv_threshold['green'][0], self.hsv_threshold['green'][1])
+        mask_blue = cv2.inRange(hsv, self.hsv_threshold['blue'][0], self.hsv_threshold['blue'][1])
+        
+        rgb_mask_count = [cv2.countNonZero(mask_red),cv2.countNonZero(mask_green),cv2.countNonZero(mask_blue)]
+        index = rgb_mask_count.index(max(rgb_mask_count)) #0 is red, 1 is green, 2 is blue
+        return index
 
 if __name__ == '__main__':
-    
     camera = Camera()
     rospy.spin()
-    cv2.destroyAllWindows()
