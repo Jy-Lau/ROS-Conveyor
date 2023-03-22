@@ -36,7 +36,7 @@ class Camera():
                 rospy.logdebug("Current /camera/image_raw READY=>" + str(camera_msg))
 
             except:
-                rospy.logerr("Current /camera/image_raw not ready yet, retrying for getting camera")
+                rospy.logdebug("Current /camera/image_raw not ready yet, retrying for getting camera")
         rospy.loginfo("Checking Camera...DONE")
 
     def camera_callback(self, msg):

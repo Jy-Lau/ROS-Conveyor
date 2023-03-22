@@ -1,13 +1,9 @@
 #!/usr/bin/env python3
 
 import rospy
-from geometry_msgs.msg import Twist
 from sensor_msgs.msg import LaserScan
-from nav_msgs.msg import Odometry
-import time
-from math import pi
-from tf.transformations import euler_from_quaternion
 from std_msgs.msg import String
+from gazebo_conveyor.msg import ConveyorBeltState
 
 class Laser():
 
@@ -32,18 +28,18 @@ class Laser():
                 rospy.logdebug("Current /lidar/scan READY=>" + str(laser_msg))
 
             except:
-                rospy.logerr("Current /lidar/scan not ready yet, retrying for getting scan")
+                rospy.logdebug("Current /lidar/scan not ready yet, retrying for getting scan")
         rospy.loginfo("Checking Laser...DONE")
 
     def laser_callback(self, msg):
         self.rate.sleep()
         if msg.ranges[15] <=0.5 and self.object_detect is False:
             self.object_detect = True
-            rospy.loginfo(f"Object detected!")
             rospy.Timer(self.timeout,self._publish_to_camera_callback,True)
             
         elif msg.ranges[15] >0.5 and self.object_detect is True:
             self.object_detect = False
+        
 
     def _publish_to_camera_callback(self,event):
         self.obstacle_publisher.publish("In")

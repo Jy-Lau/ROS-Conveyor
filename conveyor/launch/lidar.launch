@@ -1,26 +1,16 @@
 <launch>
-<!-- <arg name="rvizconfig" default="$(find bilkins)/rviz/urdf.rviz" /> -->
+  <arg name="x" default="0.5" />
+  <arg name="y" default="2.6" />
+  <arg name="z" default="0" />
 
-  <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find conveyor)/worlds/conveyor.world"/>
-    <arg name="paused" value="false"/>
-    <arg name="use_sim_time" value="true"/>
-    <arg name="gui" value="true"/>
-    <arg name="headless" value="false"/>
-    <arg name="debug" value="false"/>
-  </include> -->
-    <arg name="x" default="0.5" />
-    <arg name="y" default="2.6" />
-    <arg name="z" default="0" />
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find conveyor)/urdf/lidar.urdf.xacro' " />
 
-    <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find conveyor)/urdf/lidar.urdf.xacro' " />
+  <node name="spawn_model_lidar" pkg="gazebo_ros" type="spawn_model" args="-urdf -model lidar -param robot_description -x $(arg x) -y $(arg y) -z $(arg z)" respawn="false" output="screen" />
 
-    <node name="spawn_model_lidar" pkg="gazebo_ros" type="spawn_model" args="-urdf -model lidar -param robot_description -x $(arg x) -y $(arg y) -z $(arg z)" respawn="false" output="screen" />
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
 
-    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+  <node name="laser_scan" pkg="conveyor" type="laser_scan.py" required="true"/>
 
-
-     <!-- <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true" /> -->
 </launch>

@@ -4,13 +4,16 @@
   <arg name="z" default="0.0" />
   <arg name="system" default="0" />
 
-  
-	<node name="spawn_model_belt_$(arg system)" pkg="gazebo_ros" type="spawn_model" args="-urdf -robot_namespace conveyor$(arg system) -model conveyor$(arg system) -param $(arg system)/robot_description -x $(arg x) -y $(arg y) -z $(arg z)" respawn="false" output="screen" />
+  <node name="spawn_model_belt_$(arg system)" pkg="gazebo_ros" type="spawn_model" args="-urdf -robot_namespace conveyor$(arg system) -model conveyor$(arg system) -param $(arg system)/robot_description -x $(arg x) -y $(arg y) -z $(arg z)" respawn="false" output="screen" />
 
   <group ns="$(arg system)">
+    
     <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find conveyor)/urdf/conveyor.urdf.xacro' system:=$(arg system)" />
+    
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+    
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+  
   </group>
 
 
