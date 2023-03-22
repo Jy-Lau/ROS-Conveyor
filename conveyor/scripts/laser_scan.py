@@ -15,7 +15,6 @@ class Laser():
         self.object_detect = False
         self.timeout = rospy.Duration(1) #time taken for object to travel from laser scan to camera at 0.3 m/s
         self.obstacle_publisher = rospy.Publisher('/obstacle', String, queue_size=10)
-        # Subscribe to scan
         self.laser_subscriber = rospy.Subscriber('/lidar/scan', LaserScan, self.laser_callback)
         
 
@@ -32,13 +31,14 @@ class Laser():
         rospy.loginfo("Checking Laser...DONE")
 
     def laser_callback(self, msg):
-        self.rate.sleep()
         if msg.ranges[15] <=0.5 and self.object_detect is False:
             self.object_detect = True
             rospy.Timer(self.timeout,self._publish_to_camera_callback,True)
             
         elif msg.ranges[15] >0.5 and self.object_detect is True:
             self.object_detect = False
+        
+        self.rate.sleep()
         
 
     def _publish_to_camera_callback(self,event):
@@ -48,8 +48,4 @@ class Laser():
 if __name__ == '__main__':
     
     laser = Laser()
-    while not rospy.is_shutdown():
-        try:
-            laser.rate.sleep()
-        except rospy.ROSInterruptException:
-            pass
+    rospy.spin()

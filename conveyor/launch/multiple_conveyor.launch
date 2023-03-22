@@ -12,11 +12,13 @@
     <group ns="multi_conveyor" >
         <arg name="x_initial" default="1.0" />
         <arg name="z_initial" default="0.0" />
+        <arg name="power" default="30.0" />
         <include file="$(find conveyor)/launch/conveyor.launch">
             <arg name="system" value="1" />
             <arg name="x" value="$(arg x_initial)" />
             <arg name="y" value="1.2" />
             <arg name="z" value="$(arg z_initial)" />
+            <arg name="power" value="0" />
         </include>
 
         <include file="$(find conveyor)/launch/conveyor.launch">
@@ -24,6 +26,7 @@
             <arg name="x" value="$(arg x_initial)" />
             <arg name="y" value="2.4" />
             <arg name="z" value="$(arg z_initial)" />
+            <arg name="power" value="$(arg power)" />
         </include>
 
         <include file="$(find conveyor)/launch/conveyor.launch">
@@ -31,6 +34,7 @@
             <arg name="x" value="$(arg x_initial)" />
             <arg name="y" value="3.6" />
             <arg name="z" value="$(arg z_initial)" />
+            <arg name="power" value="$(arg power)" />
         </include>
 
         <include file="$(find conveyor)/launch/conveyor.launch">
@@ -38,6 +42,7 @@
             <arg name="x" value="$(arg x_initial)" />
             <arg name="y" value="4.8" />
             <arg name="z" value="$(arg z_initial)" />
+            <arg name="power" value="$(arg power)" />
         </include>
 
         <include file="$(find conveyor)/launch/conveyor.launch">
@@ -45,6 +50,7 @@
             <arg name="x" value="$(arg x_initial)" />
             <arg name="y" value="6.0" />
             <arg name="z" value="$(arg z_initial)" />
+            <arg name="power" value="0" />
         </include>
     </group>
 

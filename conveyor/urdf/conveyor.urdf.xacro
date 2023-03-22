@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
-     Commit Version: 1.5.1-0-g916b5db  Build Version: 1.5.7152.31018
-     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+
 <robot name="conveyor" xmlns:xacro="http://ros.org/wiki/xacro">
 	<xacro:include filename="$(find conveyor)/urdf/common_properties.xacro"/>
 	<xacro:arg name="system" default="0"/>
+	<xacro:arg name="power" default="30"/>
 	
     <link name="world" />
 
@@ -89,7 +88,7 @@
 		<plugin name="conveyor_belt_plugin" filename="libROSConveyorBeltPlugin.so">
 			<robot_namespace>/</robot_namespace>
 			<link>belt$(arg system)_moving</link>
-			<power>30</power>
+			<power>$(arg power)</power>
 			<control_topic>conveyor/control$(arg system)</control_topic>
 			<state_topic>conveyor/state$(arg system)</state_topic>
 			<max_velocity>1.0</max_velocity>

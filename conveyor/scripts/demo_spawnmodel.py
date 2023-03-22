@@ -73,6 +73,7 @@ if __name__ == "__main__":
 	rospy.wait_for_service("/gazebo/delete_model")
 	rospy.wait_for_service("/gazebo/spawn_urdf_model")
 	rospy.wait_for_service("/gazebo/get_model_state")
+	rospy.sleep(4)
 	cs = CubeSpawner()
 	rospy.on_shutdown(cs.shutdown_hook)
 	rospy.Timer(cs.timeout,cs.check_model_callback)

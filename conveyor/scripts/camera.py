@@ -11,7 +11,6 @@ class Camera():
 
     def __init__(self):
         rospy.init_node('camera_node', anonymous=True)
-        self.rate = rospy.Rate(10)
         rospy.loginfo("Camera...")
         self._check_camera_ready()
         self.bridge = CvBridge()
